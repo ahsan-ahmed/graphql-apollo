@@ -1,26 +1,36 @@
 const express = require('express');
 const { ApolloServer, gql } = require('apollo-server-express');
 const cors = require("cors");
+const bodyparser = require("body-parser");
 
-const { schema } = require('./src/schema');
-const { resolvers } = require('./src/resolvers');
-const { models } = require('./src/models');
+const { schema } = require('./server/schema');
+const { resolvers } = require('./server/resolvers');
+const { User } = require('./server/models/users');
+const { mongoose } = require("./server/dbConfig")
 
+const db = mongoose.connection;
+const port = process.env.PORT || 4000;
 const app = express();
 
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function () {
+    console.log("db connected!");
+});
+
 app.use(cors());
+app.use(bodyparser.json())
 
 const server = new ApolloServer({
     typeDefs: schema,
     resolvers,
     context: {
-        models,
-        me: models.users[1],
+        User,
+        // me: models.users[1],
     },
 });
 
 server.applyMiddleware({ app, path: '/graphql' });
 
-app.listen({ port: 8000 }, () => {
-    console.log('Apollo Server on http://localhost:8000/graphql');
+app.listen(port, () => {
+    console.log(`Apollo Server on http://localhost:${port}/graphql`);
 });
