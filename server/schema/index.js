@@ -18,10 +18,10 @@ const { gql } = require('apollo-server-express');
 const schema = gql`
  type Query{
     user(id: ID!): User
-    users:[User!]
+    users(rollno:Int):[User!]
  }
  type User{
-    id: ID!
+     id: ID!
      firstname:String
      lastname:String
      gpa:String

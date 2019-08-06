@@ -4,8 +4,9 @@
 
 const resolvers = {
     Query: {
-        users: async (parent, args, { User }) => {
-            const users = await User.find({});
+        users: async (parent, {rollno}, { User }) => {
+            console.log(rollno)
+            const users = await User.find({rollno});
             return users
             // return users.map((user) => {
             //     user._id = user._id.toString();
